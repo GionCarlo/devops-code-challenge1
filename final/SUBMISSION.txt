@@ -1,0 +1,16 @@
+Project: DevOps Code Challenge — Final Submission
+
+GitHub (private): https://github.com/GionCarlo/devops-code-challenge1
+Access: [add your grader’s GitHub handle as a collaborator]
+
+Jenkins URL: http://<your-jenkins-address>:8080
+Jenkins Username: <your-user>
+Jenkins Password or Token: <temporary token/password for grading>  (delete/rotate after grading)
+
+Frontend Public URL:
+http://devops-challenge-alb-1363161187.us-east-1.elb.amazonaws.com/
+
+Notes:
+- Load test run with: siege -c 250 -t 2M
+- Scaling proof screenshots stored in final/artifacts/
+
