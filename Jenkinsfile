@@ -12,13 +12,12 @@ pipeline {
 
     stages {
         stage('Checkout Code') {
-    steps {
-        git branch: 'main',
-            credentialsId: 'github-gioncarlo-pat',
-            url: 'https://github.com/gioncarlo/devops-code-challenge1.git'
-    }
-}
-
+            steps {
+                git branch: 'main',
+                    credentialsId: 'github-gioncarlo-pat',
+                    url: 'https://github.com/gioncarlo/devops-code-challenge1.git'
+            }
+        }
 
         stage('Login to AWS ECR') {
             steps {
