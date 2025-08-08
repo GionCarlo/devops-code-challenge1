@@ -20,16 +20,15 @@ pipeline {
         }
 
         stage('Login to AWS ECR') {
-    steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
-            sh '''
-            aws ecr get-login-password --region $AWS_REGION \
-                | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-            '''
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                    sh '''
+                    aws ecr get-login-password --region $AWS_REGION \
+                        | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+                    '''
+                }
+            }
         }
-    }
-}
-
 
         stage('Build Frontend Docker Image') {
             steps {
@@ -51,33 +50,38 @@ pipeline {
 
         stage('Push Frontend to ECR') {
             steps {
-                sh 'docker push $FRONTEND_REPO:latest'
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                    sh 'docker push $FRONTEND_REPO:latest'
+                }
             }
         }
 
         stage('Push Backend to ECR') {
             steps {
-                sh 'docker push $BACKEND_REPO:latest'
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                    sh 'docker push $BACKEND_REPO:latest'
+                }
             }
         }
 
         stage('Deploy to ECS') {
-    steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
-            sh '''
-            aws ecs update-service \
-                --cluster devops-challenge-cluster \
-                --service frontend-service \
-                --force-new-deployment \
-                --region $AWS_REGION
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                    sh '''
+                    aws ecs update-service \
+                        --cluster devops-challenge-cluster \
+                        --service frontend-service \
+                        --force-new-deployment \
+                        --region $AWS_REGION
 
-            aws ecs update-service \
-                --cluster devops-challenge-cluster \
-                --service backend-service \
-                --force-new-deployment \
-                --region $AWS_REGION
-            '''
+                    aws ecs update-service \
+                        --cluster devops-challenge-cluster \
+                        --service backend-service \
+                        --force-new-deployment \
+                        --region $AWS_REGION
+                    '''
+                }
+            }
         }
     }
 }
-
