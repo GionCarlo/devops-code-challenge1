@@ -23,8 +23,8 @@ pipeline {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                     sh '''
-                    aws ecr get-login-password --region $AWS_REGION \
-                        | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+                        aws ecr get-login-password --region $AWS_REGION \
+                            | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
                     '''
                 }
             }
@@ -33,8 +33,8 @@ pipeline {
         stage('Build Frontend Docker Image') {
             steps {
                 sh '''
-                cd frontend
-                docker build -t $FRONTEND_REPO:latest .
+                    cd frontend
+                    docker build -t $FRONTEND_REPO:latest .
                 '''
             }
         }
@@ -42,8 +42,8 @@ pipeline {
         stage('Build Backend Docker Image') {
             steps {
                 sh '''
-                cd backend
-                docker build -t $BACKEND_REPO:latest .
+                    cd backend
+                    docker build -t $BACKEND_REPO:latest .
                 '''
             }
         }
@@ -68,14 +68,20 @@ pipeline {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
                     sh '''
-                    aws ecs update-service \
-                        --cluster devops-challenge-cluster \
-                        --service devops-challenge-frontend-service \
-                        --force-new-deployment \
-                        --region $AWS_REGION
+                        aws ecs update-service \
+                            --cluster devops-challenge-cluster \
+                            --service devops-challenge-frontend-service \
+                            --force-new-deployment \
+                            --region $AWS_REGION
 
-                    aws ecs update-service \
-                        --cluster devops-challenge-cluster \
-                        --service devops-challenge-backend-service \
-                        --force-new-deployment \
-                        --region $AWS_REGION
+                        aws ecs update-service \
+                            --cluster devops-challenge-cluster \
+                            --service devops-challenge-backend-service \
+                            --force-new-deployment \
+                            --region $AWS_REGION
+                    '''
+                }
+            }
+        }
+    }
+}
