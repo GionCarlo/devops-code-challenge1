@@ -43,3 +43,9 @@ curl -i  http://devops-challenge-backend-alb-359679492.us-east-1.elb.amazonaws.c
 ## Notes
 - Backend may not scale directly via ALB traffic; frontend is the main entry point.
 - Health checks are on the service target groups behind the ALB.
+
+## GitOps (Bonus)
+- Branch: `gitops`
+- Workflow: `.github/workflows/deploy.yml`
+- OIDC role: `arn:aws:iam::939966404349:role/GitHubActionsECSDeploy`
+- Result: GitHub Actions builds/pushes images to ECR and forces new ECS deployments (frontend & backend).
