@@ -1,16 +1,32 @@
 Project: DevOps Code Challenge — Final Submission
 
 GitHub (private): https://github.com/GionCarlo/devops-code-challenge1
-Access: [add your grader’s GitHub handle as a collaborator]
+Access: Grader has been added as a collaborator (no PAT shared)
 
-Jenkins URL: http://3.215.163.156:8080/
-Jenkins Username: admin
-Jenkins Password or Token: Jenkins1517  (delete/rotate after grading)
+Jenkins (legacy CI):
+- URL: http://3.215.163.156:8080/
+- Username: admin
+- Password or API Token: Jenkins1517  (rotate/delete after grading)
 
-Frontend Public URL:
-http://devops-challenge-alb-1363161187.us-east-1.elb.amazonaws.com/
+Public URLs:
+- Frontend: http://devops-challenge-alb-1363161187.us-east-1.elb.amazonaws.com/
+- Backend API: http://devops-challenge-backend-alb-359679492.us-east-1.elb.amazonaws.com/api
 
 Notes:
 - Load test run with: siege -c 250 -t 2M
-- Scaling proof screenshots stored in final/artifacts/
+- Scaling proof screenshots stored in: final/artifacts/
+  - frontend-backend-success.png
+  - ecs-frontend-deployment.png
+  - ecs-backend-deployment.png
+  - (optional) ecs-frontend-cpu.png, ecs-frontend-events.png
+
+GitOps:
+- Branch: gitops
+- Workflow: .github/workflows/deploy.yml
+- AWS OIDC Role: arn:aws:iam::939966404349:role/GitHubActionsECSDeploy
+- Trigger: push to gitops branch (Actions builds + pushes images to ECR and forces new ECS deployments)
+- ECR repos (us-east-1):
+  - 939966404349.dkr.ecr.us-east-1.amazonaws.com/devops-challenge-frontend
+  - 939966404349.dkr.ecr.us-east-1.amazonaws.com/devops-challenge-backend
+
 
