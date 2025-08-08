@@ -1,0 +1,55 @@
+name: Deploy to ECS
+
+on:
+  push:
+    branches: [ gitops ]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_FRONTEND: 939966404349.dkr.ecr.us-east-1.amazonaws.com/devops-challenge-frontend
+  ECR_BACKEND: 939966404349.dkr.ecr.us-east-1.amazonaws.com/devops-challenge-backend
+  CLUSTER_NAME: devops-challenge-cluster
+  FRONTEND_SVC: devops-challenge-frontend-service
+  BACKEND_SVC: devops-challenge-backend-service
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::939966404349:role/GitHubActionsECSDeploy
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push FRONTEND image
+        run: |
+          docker build -t frontend:latest ./frontend
+          docker tag frontend:latest $ECR_FRONTEND:latest
+          docker push $ECR_FRONTEND:latest
+
+      - name: Build, tag, and push BACKEND image
+        run: |
+          docker build -t backend:latest ./backend
+          docker tag backend:latest $ECR_BACKEND:latest
+          docker push $ECR_BACKEND:latest
+
+      - name: Update ECS FRONTEND service
+        run: |
+          aws ecs update-service --cluster "$CLUSTER_NAME" --service "$FRONTEND_SVC" --force-new-deployment
+
+      - name: Update ECS BACKEND service
+        run: |
+          aws ecs update-service --cluster "$CLUSTER_NAME" --service "$BACKEND_SVC" --force-new-deployment
+
